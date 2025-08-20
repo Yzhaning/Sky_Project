@@ -69,7 +69,6 @@ public class EmployeeServiceImpl implements EmployeeService {
      */
     @Override
     public void save(EmployeeDTO emp) {
-        System.out.println("当前线程id"+ Thread.currentThread().getId());
 
         Employee employee = new Employee();
 //        对象属性拷贝
@@ -86,7 +85,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setUpdateTime(LocalDateTime.now());
 
 //        设置当前创建人的id与修改人的id
-//        TODO 后期需要修改为当前登录用户的ID
+//        修改为当前登录用户的ID
         employee.setCreateUser(BaseContext.getCurrentId());
         employee.setUpdateUser(BaseContext.getCurrentId());
 
