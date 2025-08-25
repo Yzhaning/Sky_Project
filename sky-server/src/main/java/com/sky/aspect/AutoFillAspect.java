@@ -17,22 +17,22 @@ import java.time.LocalDateTime;
 
 /**
  * 自定义切面  实现公共字段自动填充逻辑
- * */
+ */
 @Aspect
 @Component
 @Slf4j
 public class AutoFillAspect {
 
     /**
-    * 切入点
-    * */
+     * 切入点
+     */
     @Pointcut("execution(* com.sky.mapper.*.*(..))&& @annotation(com.sky.annotation.AutoFill)"/*拦截地点所有的类和方法以及参数 并指定特定的语句*/)
-    public void autoFillPointCut(){
+    public void autoFillPointCut() {
 
     }
 
     @Before("autoFillPointCut()")
-    public void autoFill(JoinPoint joinPoint){
+    public void autoFill(JoinPoint joinPoint) {
         log.info("开始进行公共字段的自动填充");
 //        获取到当前拦截的方法上数据库操作类型
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();// 方法签名对象
@@ -42,7 +42,7 @@ public class AutoFillAspect {
 //        获取到当前被拦截的方法的参数--实体对象
         Object[] args = joinPoint.getArgs();
 //        如果获取的实体为空
-        if (args==null||args.length==0){
+        if (args == null || args.length == 0) {
             return;
         }
         Object entity = args[0];
@@ -50,33 +50,30 @@ public class AutoFillAspect {
         LocalDateTime now = LocalDateTime.now();
         Long currentId = BaseContext.getCurrentId();
 //        根据不同的操作类型对属性进行赋值
-        if (operationType==OperationType.INSERT){
+        if (operationType == OperationType.INSERT) {
             try {
-                Method setCreateTime = entity.getClass().getDeclaredMethod("setCreateTime",LocalDateTime.class);
-                Method setCreateUser = entity.getClass().getDeclaredMethod("setCreateUser",LocalDateTime.class);
-                Method setUpdateTime = entity.getClass().getDeclaredMethod("setUpdateTime",LocalDateTime.class);
-                Method setUpdateUser = entity.getClass().getDeclaredMethod("setUpdateUser",LocalDateTime.class);
+                Method setCreateTime = entity.getClass().getDeclaredMethod("setCreateTime", LocalDateTime.class);
+                Method setCreateUser = entity.getClass().getDeclaredMethod("setCreateUser", LocalDateTime.class);
+                Method setUpdateTime = entity.getClass().getDeclaredMethod("setUpdateTime", LocalDateTime.class);
+                Method setUpdateUser = entity.getClass().getDeclaredMethod("setUpdateUser", LocalDateTime.class);
 //               通过反射赋值
-                setCreateTime.invoke(entity,now);
-                setCreateUser.invoke(entity,currentId);
-                setUpdateTime.invoke(entity,now);
-                setUpdateUser.invoke(entity,currentId);
-            }catch (Exception e){
+                setCreateTime.invoke(entity, now);
+                setCreateUser.invoke(entity, currentId);
+                setUpdateTime.invoke(entity, now);
+                setUpdateUser.invoke(entity, currentId);
+            } catch (Exception e) {
                 e.printStackTrace();
             }
-
-        }else if(operationType==OperationType.UPDATE) {
+        } else if (operationType == OperationType.UPDATE) {
             try {
-                Method setUpdateTime = entity.getClass().getDeclaredMethod("setUpdateTime",LocalDateTime.class);
-                Method setUpdateUser = entity.getClass().getDeclaredMethod("setUpdateUser",LocalDateTime.class);
+                Method setUpdateTime = entity.getClass().getDeclaredMethod("setUpdateTime", LocalDateTime.class);
+                Method setUpdateUser = entity.getClass().getDeclaredMethod("setUpdateUser", LocalDateTime.class);
 //               通过反射赋值
-                setUpdateTime.invoke(entity,now);
-                setUpdateUser.invoke(entity,currentId);
-            }catch (Exception e){
+                setUpdateTime.invoke(entity, now);
+                setUpdateUser.invoke(entity, currentId);
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-
-
     }
 }
